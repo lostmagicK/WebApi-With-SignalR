@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script type="text/javascript">
+
+        $(function () {
+            var job = $.connection.myHub;
+            job.client.displayStatus = function () {
+                getData();
+            };
+            $.connection.hub.start();
+            getData();
+        });
+
+        function getData() {
+            var $tbl = $('#tbl');
+            $.ajax({
+                url: './api/employee',
+                contentType: "application/json; charset=utf-8",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        var newdata = data;
+                        $tbl.empty();
+                        $tbl.append('<tr><th>ID</th><th>FirstName</th><th>LastName</th><th>Gender</th><th>Email</th></tr>');
+                        var rows = [];
+                        for (var i = 0; i < newdata.length; i++) {
+                            rows.push('<tr><td>' + newdata[i].ID + '</td><td>' + newdata[i].FirstName + '</td><td>' + newdata[i].LastName + '</td><td>' + newdata[i].Gender + '</td><td>' + newdata[i].Email + '</td></tr>');
+                        }
+                        $tbl.append(rows.join(''));
+                    }
+                }
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <table id="tbl"></table>
+        </div>
+    </form>
+</body>
+</html>
